@@ -6,32 +6,31 @@ const escapeHtml = (v) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-const BRAND = {
-  name: process.env.COMPANY_NAME || "El Waa3b",
-  color: process.env.BRAND_COLOR || "#fff",
-};
-
 function buildContactEmail({
   name,
   email,
   message,
-  logoDataUri,
+  companyName,
+  companyLogoUrl,
+  brandColor,
 }) {
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safeMessage = escapeHtml(message).replace(/\r?\n/g, "<br>");
+  const safeCompanyName = escapeHtml(companyName);
 
-  const date = new Date().toLocaleString("en-GB", {
+  const date = `${new Date().toLocaleString("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
-  });
+    timeZone: "UTC",
+  })} UTC`;
 
 
-  const logoHtml = logoDataUri
+  const logoHtml = companyLogoUrl
     ? `
       <img
-        src="${process.env.COMPANY_LOGO_URL}"
-        alt="${escapeHtml(BRAND.name)}"
+        src="${escapeHtml(companyLogoUrl)}"
+        alt="${safeCompanyName}"
         width="auto"
         height="40"
         style="
@@ -55,7 +54,7 @@ function buildContactEmail({
           color:#ffffff;
         "
       >
-        ${escapeHtml(BRAND.name)}
+        ${safeCompanyName}
       </span>
     `;
 
@@ -124,7 +123,7 @@ function buildContactEmail({
               align="left"
               valign="middle"
               style="
-                background-color:${BRAND.color};
+                background-color:${brandColor};
                 padding:20px 32px;
               "
             >
@@ -285,7 +284,7 @@ function buildContactEmail({
 
               <div
                 style="
-                  border-left:4px solid ${BRAND.color};
+                  border-left:4px solid ${brandColor};
                   background-color:#f9fafb;
                   padding:16px 20px;
                   border-radius:0 8px 8px 0;
